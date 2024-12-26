@@ -1,0 +1,33 @@
+type Tenant @model @auth(rules: [{ allow: groups, groups: ["Admin"] }]) {
+  id: ID!
+  name: String!
+  adminId: String!
+}
+
+type User @model
+  @auth(
+    rules: [
+      { allow: owner },
+      { allow: groups, groups: ["TenantAdmin"], operations: [create, read, update] },
+      { allow: groups, groups: ["Admin"], operations: [create, read, update, delete] }
+    ]
+  ) {
+  id: ID!
+  username: String!
+  tenantId: ID!
+  role: String!
+}
+
+type Message @model
+  @auth(
+    rules: [
+      { allow: owner },
+      { allow: groups, groups: ["TenantAdmin"], operations: [create, read, delete] },
+      { allow: groups, groups: ["Admin"], operations: [create, read, delete] }
+    ]
+  ) {
+  id: ID!
+  content: String!
+  tenantId: ID!
+  createdAt: AWSDateTime!
+}
